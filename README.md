@@ -1,4 +1,4 @@
-# Official Chimera Web Wallet - Fully client-side 
+# Official Chimera Web Wallet - Fully client-side
 This web wallet is doing everything client-side to give the best privacy to users.
 The server is currently only used to optimize the communication with the daemon and compress the blockchain.  
 
@@ -31,7 +31,7 @@ Read [the translations guide](TRANSLATIONS.md) to get instructions on how to do 
 # Forks / Other Coins
 We have been receiving multiple coin developers help to fork it. As the time required to develop this project is heavy, please consider giving a mention to this project if you fork it.
 
-If you are a developer of a Cryptonote/Monero fork and would like to get a fork, please contact us (@gnock on the [official Discord](https://discord.gg/eSb9ZdM)).
+If you are a developer of a Cryptonote/Monero fork and would like to get a fork, please contact us (@tylersisia on the [official Discord](https://discord.gg/rJ99637)).
 
 Depending on your coin specifics, I can provide support, maintenancem and development/updates for a payment in return - crypto only.
 If you are not willing to pay for this service, please do not contact us and make us lose time.
@@ -50,4 +50,4 @@ The code is readable, it should be enough for you to use it.
 - Basic network stats
 
 # Roadmap
-See Github [issues.](https://github.com/Chimera-project/Chimera-webwallet/issues)
+See Github [issues.](https://github.com/tylersisia/chimera-webwallet/issues)
