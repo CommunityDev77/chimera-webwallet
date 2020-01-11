@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -15,13 +14,14 @@
  */
 
 import {DependencyInjectorInstance} from "../lib/numbersLab/DependencyInjector";
+import {BlockchainExplorerRpc2, WalletWatchdog} from "./blockchain/BlockchainExplorerRpc2";
 import {Wallet} from "./Wallet";
 import {BlockchainExplorerProvider} from "../providers/BlockchainExplorerProvider";
 import {Observable} from "../lib/numbersLab/Observable";
 import {WalletRepository} from "./WalletRepository";
-import {BlockchainExplorer, RawDaemon_Transaction} from "./blockchain/BlockchainExplorer";
+import {BlockchainExplorer} from "./blockchain/BlockchainExplorer";
+import {Constants} from "./Constants";
 import {TransactionsExplorer} from "./TransactionsExplorer";
-import {WalletWatchdog} from "./WalletWatchdog";
 
 export class WalletWorker{
 	wallet : Wallet;
@@ -117,7 +117,7 @@ export class AppState{
 						let memoryWallet = DependencyInjectorInstance().getInstance(Wallet.name, 'default', false);
 						if(memoryWallet === null){
 							WalletRepository.getLocalWalletWithPassword(savePassword).then((wallet : Wallet|null) => {
-								console.log(wallet);
+								//console.log(wallet);
 								if (wallet !== null) {
 									wallet.recalculateIfNotViewOnly();
 
@@ -130,13 +130,13 @@ export class AppState{
 									}
 									let blockchainHeightToRescan = Object.keys(blockchainHeightToRescanObj);
 									if (blockchainHeightToRescan.length > 0) {
-										let blockchainExplorer: BlockchainExplorer = BlockchainExplorerProvider.getInstance();
+										let blockchainExplorer: BlockchainExplorerRpc2 = BlockchainExplorerProvider.getInstance();
 
 										let promisesBlocks = [];
 										for (let height of blockchainHeightToRescan) {
-											promisesBlocks.push(blockchainExplorer.getTransactionsForBlocks(parseInt(height),parseInt(height),false));
+											promisesBlocks.push(blockchainExplorer.getTransactionsForBlocks(parseInt(height)));
 										}
-										Promise.all(promisesBlocks).then(function (arrayOfTxs: Array<RawDaemon_Transaction[]>) {
+										Promise.all(promisesBlocks).then(function (arrayOfTxs: Array<RawDaemonTransaction[]>) {
 											for (let txs of arrayOfTxs) {
 												for (let rawTx of txs) {
 													if (wallet !== null) {

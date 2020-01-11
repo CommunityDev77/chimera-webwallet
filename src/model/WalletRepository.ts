@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -33,14 +32,14 @@ export class WalletRepository{
 			password = ('00000000000000000000000000000000'+password).slice(-32);
 		}
 		let privKey = new (<any>TextEncoder)("utf8").encode(password);
-		console.log('open wallet with nonce', rawWallet.nonce);
+		//console.log('open wallet with nonce', rawWallet.nonce);
 		let nonce = new (<any>TextEncoder)("utf8").encode(rawWallet.nonce);
 
 		let decodedRawWallet = null;
 
 		//detect if old type or new type of wallet
 		if(typeof (<any>rawWallet).data !== 'undefined'){//RawFullyEncryptedWallet
-			console.log('new wallet format');
+			//console.log('new wallet format');
 			let rawFullyEncrypted : RawFullyEncryptedWallet = <any>rawWallet;
 			let encrypted = new Uint8Array(<any>rawFullyEncrypted.data);
 			let decrypted = nacl.secretbox.open(encrypted, nonce, privKey);
@@ -53,7 +52,7 @@ export class WalletRepository{
 				decodedRawWallet = null;
 			}
 		}else{//RawWallet
-			console.log('old wallet format');
+			//console.log('old wallet format');
 			let oldRawWallet : RawWallet = <any>rawWallet;
 			let encrypted = new Uint8Array(<any>oldRawWallet.encryptedKeys);
 			let decrypted = nacl.secretbox.open(encrypted, nonce, privKey);
@@ -75,6 +74,7 @@ export class WalletRepository{
 
 	static getLocalWalletWithPassword(password : string) : Promise<Wallet|null>{
 		return Storage.getItem('wallet', null).then((existingWallet : any) => {
+			//console.log(existingWallet);
 			if(existingWallet !== null){
 				return this.decodeWithPassword(JSON.parse(existingWallet), password);
 			}else{
@@ -146,7 +146,7 @@ export class WalletRepository{
 		let doc = new jsPDF('landscape');
 
 		//creating background
-		doc.setFillColor(35,31,39);
+		doc.setFillColor(48,70,108);
 		doc.rect(0,0,297,210, 'F');
 
 		//white blocks
@@ -154,12 +154,12 @@ export class WalletRepository{
 		doc.rect(108,10,80,80, 'F');
 		doc.rect(10,115,80,80, 'F');
 
-		//green blocks
-		doc.setFillColor(76, 184, 96);
+		//blue blocks
+		doc.setFillColor(0, 160, 227);
 		doc.rect(108,115,80,80, 'F');
 
-		//green background for texts
-		doc.setFillColor(76, 184, 96);
+		//blue background for texts
+		doc.setFillColor(0, 160, 227);
 
 		doc.rect(108,15,80,20, 'F');
 		doc.rect(10,120,80,20, 'F');
@@ -184,15 +184,15 @@ export class WalletRepository{
 		doc.setTextColor(255, 255, 255);
 		doc.setFontSize(10);
 		doc.text(110, 120, "To deposit funds to this paper wallet, send ");
-		doc.text(110, 125, "Chimera to the public address");
+		doc.text(110, 125, "CMRA to the public address");
 
 		doc.text(110, 135, "DO NOT REVEAL THE PRIVATE KEY");
 
-		//adding Chimera logo
+		//adding qwertycoin logo
 		let c : HTMLCanvasElement|null = <HTMLCanvasElement>document.getElementById('canvasExport');
 		if(c !== null) {
 			let ctx = c.getContext("2d");
-			let img: ImageBitmap | null = <ImageBitmap | null>document.getElementById("verticalChimeraLogo");
+			let img: ImageBitmap | null = <ImageBitmap | null>document.getElementById("verticalLogo");
 			if (ctx !== null && img !== null) {
 				c.width = img.width;
 				c.height = img.height;

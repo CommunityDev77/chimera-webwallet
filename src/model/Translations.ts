@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -35,7 +34,7 @@ export class Translations{
 	static storedTranslations : any = {};
 
 	static loadLangTranslation(lang : string) : Promise<void>{
-		console.log('setting lang to '+lang);
+		//console.log('setting lang to '+lang);
 		let promise : Promise<{messages?: any, date?: string, number?: string }>;
 		if(typeof Translations.storedTranslations[lang] !== 'undefined')
 			promise = Promise.resolve(Translations.storedTranslations[lang]);

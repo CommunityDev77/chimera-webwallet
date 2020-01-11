@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -14,12 +13,11 @@
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-import {Cn} from "./Cn";
-
 export class CoinUri{
 
-	static coinTxPrefix = config.coinUriPrefix;
-	static coinWalletPrefix = config.coinUriPrefix;
+	static coinTxPrefix = 'chimera:';
+	static coinWalletPrefix = 'chimera:';
+	static coinAddressLength = 99;
 
 	static decodeTx(str : string) : {
 		address:string,
@@ -29,36 +27,43 @@ export class CoinUri{
 		description?:string,
 	}|null {
 		if(str.indexOf(CoinUri.coinTxPrefix) === 0){
-			let data = str.replace(this.coinTxPrefix,'').trim();
-			let exploded = data.split('?');
+			let data = str.replace(this.coinTxPrefix,'');
+			let temp = data.replace(/&/g, '?').trim();
+			let exploded = temp.split('?');
 
 			if(exploded.length == 0)
 				throw 'missing_address';
 
-			try {
-				Cn.decode_address(exploded[0]);
-			}catch(e){
+			if(exploded[0].length !== this.coinAddressLength)
 				throw 'invalid_address_length';
-			}
 
 			let decodedUri : any = {
 				address:exploded[0]
 			};
 
-			for(let i = 1; i < exploded.length; ++i){
+			for(let i = 0; i < exploded.length; ++i){
 				let optionParts = exploded[i].split('=');
 				if(optionParts.length === 2){
 					switch (optionParts[0].trim()){
+						case 'payment_id':
+							decodedUri.paymentId=optionParts[1];
+							break;
 						case 'tx_payment_id':
 							decodedUri.paymentId=optionParts[1];
 							break;
 						case 'recipient_name':
 							decodedUri.recipientName=optionParts[1];
 							break;
+						case 'amount':
+							decodedUri.amount=optionParts[1];
+							break;
 						case 'tx_amount':
 							decodedUri.amount=optionParts[1];
 							break;
 						case 'tx_description':
+							decodedUri.description=optionParts[1];
+							break;
+						case 'label':
 							decodedUri.description=optionParts[1];
 							break;
 					}
@@ -80,16 +85,13 @@ export class CoinUri{
 
 	static encodeTx(address : string, paymentId:string|null = null, amount : string|null=null, recipientName:string|null = null, description : string|null=null) : string{
 		let encoded = this.coinTxPrefix + address;
-		try {
-			Cn.decode_address(address);
-		}catch(e){
+		if(address.length !== this.coinAddressLength)
 			throw 'invalid_address_length';
-		}
 
-		if(paymentId !== null) encoded += '?tx_payment_id='+paymentId;
-		if(amount !== null) encoded+= '?tx_amount='+amount;
+		if(paymentId !== null) encoded += '?payment_id='+paymentId;
+		if(amount !== null) encoded+= '?amount='+amount;
 		if(recipientName !== null) encoded += '?recipient_name='+recipientName;
-		if(description !== null) encoded += '?tx_description='+description;
+		if(description !== null) encoded += '?label='+description;
 		return encoded;
 	}
 
@@ -109,11 +111,8 @@ export class CoinUri{
 			if(exploded.length == 0)
 				throw 'missing_address';
 
-			try {
-				Cn.decode_address(exploded[0]);
-			}catch(e){
+			if(exploded[0].length !== this.coinAddressLength)
 				throw 'invalid_address_length';
-			}
 
 			let decodedUri : any = {
 				address:exploded[0]
@@ -168,11 +167,8 @@ export class CoinUri{
 
 	static encodeWalletKeys(address : string, spendKey : string, viewKey : string|null=null, height:number|null=null, encryptMethod:string|null=null,nonce:string|null=null){
 		let encoded = this.coinWalletPrefix + address;
-		try {
-			Cn.decode_address(address);
-		}catch(e){
+		if(address.length !== this.coinAddressLength)
 			throw 'invalid_address_length';
-		}
 
 		if(spendKey !== null) encoded += '?spend_key='+spendKey;
 		if(viewKey !== null) encoded+= '?view_key='+viewKey;

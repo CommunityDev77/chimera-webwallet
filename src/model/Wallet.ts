@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -17,7 +16,7 @@
 import {Transaction, TransactionIn, TransactionOut} from "./Transaction";
 import {KeysRepository, UserKeys} from "./KeysRepository";
 import {Observable} from "../lib/numbersLab/Observable";
-import {Cn, CnTransactions} from "./Cn";
+import {CryptoUtils} from "./CryptoUtils";
 
 export type RawWalletOptions = {
 	checkMinerTx?:boolean,
@@ -214,8 +213,6 @@ export class Wallet extends Observable{
 
 	addTxPrivateKeyWithTxHash(txHash : string, txPrivKey : string) : void{
 		this.txPrivateKeys[txHash] = txPrivKey;
-		this.modified = true;
-		this.notify();
 	}
 
 	getTransactionKeyImages(){
@@ -283,21 +280,21 @@ export class Wallet extends Observable{
 			}
 		}
 
-		// console.log(this.txsMem);
+		//console.log(this.txsMem);
 		for(let transaction of this.txsMem){
-			// console.log(transaction.paymentId);
+			//console.log(transaction.paymentId);
 			// for(let out of transaction.outs){
 			// 	amount += out.amount;
 			// }
-			if(currentBlockHeight === -1)
+			if(transaction.isConfirmed(currentBlockHeight) || currentBlockHeight === -1)
 				for(let nout of transaction.outs){
 					amount += nout.amount;
-					// console.log('+'+nout.amount);
+					//console.log('+'+nout.amount);
 				}
 
 			for(let nin of transaction.ins){
 				amount -= nin.amount;
-				// console.log('-'+nin.amount);
+				//console.log('-'+nin.amount);
 			}
 		}
 
@@ -310,7 +307,7 @@ export class Wallet extends Observable{
 	}
 
 	getPublicAddress(){
-		return Cn.pubkeys_to_string(this.keys.pub.spend,this.keys.pub.view);
+		return cnUtil.pubkeys_to_string(this.keys.pub.spend,this.keys.pub.view);
 	}
 
 	recalculateIfNotViewOnly(){
@@ -327,13 +324,13 @@ export class Wallet extends Observable{
 				if(needDerivation) {
 					let derivation = '';
 					try {
-						derivation = Cn.generate_key_derivation(tx.txPubKey, this.keys.priv.view);//9.7ms
+						derivation = cnUtil.generate_key_derivation(tx.txPubKey, this.keys.priv.view);//9.7ms
 					} catch (e) {
 						continue;
 					}
 					for (let out of tx.outs) {
 						if (out.keyImage === '') {
-							let m_key_image = CnTransactions.generate_key_image_helper({
+							let m_key_image = CryptoUtils.generate_key_image_helper({
 								view_secret_key: this.keys.priv.view,
 								spend_secret_key: this.keys.priv.spend,
 								public_spend_key: this.keys.pub.spend,
@@ -356,7 +353,7 @@ export class Wallet extends Observable{
 
 					if(vin.amount < 0) {
 						if (this.keyImages.indexOf(vin.keyImage) != -1) {
-							// console.log('found in', vin);
+							//console.log('found in', vin);
 							let walletOuts = this.getAllOuts();
 							for (let ut of walletOuts) {
 								if (ut.keyImage == vin.keyImage) {
