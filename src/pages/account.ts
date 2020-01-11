@@ -65,9 +65,9 @@ class AccountView extends DestructableView{
 	}
 
 	moreInfoOnTx(transaction : Transaction){
-		let explorerUrlHash = config.testnet ? config.testnetExplorerUrlHash : config.mainnetExplorerUrlHash;
-		let explorerUrlBlock = config.testnet ? config.testnetExplorerUrlBlock : config.mainnetExplorerUrlBlock;
-		let transFee = 100000000; //TODO
+		let explorerUrlHash = config.mainnetExplorerUrlHash;
+		let explorerUrlBlock = config.mainnetExplorerUrlBlock;
+		let transFee = 100; //TODO
 
 		let feesHtml = '';
 		if(transaction.getAmount() < 0)
@@ -82,11 +82,11 @@ class AccountView extends DestructableView{
 		let actualHeight = this.currentScanBlock;
 
 		if(transHeight >= actualHeight) {
-			unlckStatus = (((transHeight-actualHeight)-11)*-1).toString()+'/'+config.txMinConfirms+' Confirmations';
+			unlockStatus = (((transHeight-actualHeight)-11)*-1).toString()+'/'+config.txMinConfirms+' Confirmations';
 		} else {
-			unlckStatus = config.txMinConfirms+'/'+config.txMinConfirms+' Confirmations';
+			unlockStatus = config.txMinConfirms+'/'+config.txMinConfirms+' Confirmations';
 		}
-		unlockStatus = `<div>`+i18n.t('accountPage.txDetails.unlockStatus')+`: `+unlckStatus+`</a></div>`;
+		unlockStatus = `<div>`+i18n.t('accountPage.txDetails.unlockStatus')+`: `+unlockStatus+`</a></div>`;
 
 		let txPrivKeyMessage = '';
 		let txPrivKey = wallet.findTxPrivateKeyWithHash(transaction.hash);
