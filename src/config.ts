@@ -3,9 +3,9 @@ global.config = {
 	apiUrl: [
 		"http://cache.chimeraproject.io/"
 	],
-	mainnetExplorerUrl: "https://explorer.chimeraproject.io/",
-	mainnetExplorerUrlHash: "https://explorer.chimeraproject.io/?hash={ID}#blockchain_transaction",
-	mainnetExplorerUrlBlock: "https://explorer.chimeraproject.io/?hash={ID}#blockchain_block",
+	mainnetExplorerUrl: "http://explorer.chimeraproject.io/",
+	mainnetExplorerUrlHash: "http://explorer.chimeraproject.io/?hash={ID}#blockchain_transaction",
+	mainnetExplorerUrlBlock: "http://explorer.chimeraproject.io/?hash={ID}#blockchain_block",
 	testnetExplorerUrl: "http://testnet.msrchain.net/",
 	testnetExplorerUrlHash: "http://testnet.msrchain.net/tx/{ID}",
 	testnetExplorerUrlBlock: "http://testnet.msrchain.net/block/{ID}",
