@@ -2,7 +2,7 @@ let global : any = typeof window !== 'undefined' ? window : self;
 global.config = {
 	apiUrl:typeof window !== 'undefined' && window.location ? window.location.href.substr(0,window.location.href.lastIndexOf('/')+1)+'api/' : 'https://wallet.chimeraproject.io/api/',
 	trustedDaemonsAddresses:[
-		'https://explorer.chimeraproject.io:8197/'
+		'http://explorer.chimeraproject.io:8197/'
 	],
 	phpRelay:typeof window !== 'undefined' ? true : false,
 	mainnetExplorerUrl: "https://explorer.chimeraproject.io/",
