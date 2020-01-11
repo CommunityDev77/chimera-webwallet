@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -55,7 +54,7 @@ let newIndexView = new IndexView('#app');
 
 /*
 function readFile(fileEnty:any){
-	console.log(fileEnty);
+	//console.log(fileEnty);
 }
 
 function writeFile(fileEntry, dataObj) {
@@ -63,12 +62,12 @@ function writeFile(fileEntry, dataObj) {
 	fileEntry.createWriter(function (fileWriter) {
 
 		fileWriter.onwriteend = function() {
-			console.log("Successful file write...");
+			//console.log("Successful file write...");
 			readFile(fileEntry);
 		};
 
 		fileWriter.onerror = function (e) {
-			console.log("Failed file write: " + e.toString());
+			//console.log("Failed file write: " + e.toString());
 		};
 
 		// If data object is not passed in,
@@ -91,10 +90,10 @@ function onErrorLoadFs(error){
 
 window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function (fs : any) {
 
-	console.log('file system open: ' + fs.name);
+	//console.log('file system open: ' + fs.name);
 	fs.root.getFile(cordova.file.documentsDirectory+"newPersistentFile.txt", { create: true, exclusive: false }, function (fileEntry : any) {
 
-		console.log("fileEntry is file?" + fileEntry.isFile.toString());
+		//console.log("fileEntry is file?" + fileEntry.isFile.toString());
 		// fileEntry.name == 'someFile.txt'
 		// fileEntry.fullPath == '/someFile.txt'
 		writeFile(fileEntry, null);

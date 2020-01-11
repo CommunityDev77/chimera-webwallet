@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -16,12 +15,15 @@
 
 import {DestructableView} from "../lib/numbersLab/DestructableView";
 import {VueVar} from "../lib/numbersLab/VueAnnotate";
+import {TransactionsExplorer} from "../model/TransactionsExplorer";
+import {WalletRepository} from "../model/WalletRepository";
+import {BlockchainExplorerRpc2} from "../model/blockchain/BlockchainExplorerRpc2";
+import {DependencyInjectorInstance} from "../lib/numbersLab/DependencyInjector";
+import {Constants} from "../model/Constants";
+import {Wallet} from "../model/Wallet";
 import {AppState} from "../model/AppState";
-import {BlockchainExplorer, NetworkInfo} from "../model/blockchain/BlockchainExplorer";
-import {BlockchainExplorerProvider} from "../providers/BlockchainExplorerProvider";
 
 AppState.enableLeftMenu();
-let blockchainExplorer: BlockchainExplorer = BlockchainExplorerProvider.getInstance();
 
 class NetworkView extends DestructableView{
 	@VueVar(0) networkHashrate !: number;
@@ -29,6 +31,7 @@ class NetworkView extends DestructableView{
 	@VueVar(0) networkDifficulty !: number;
 	@VueVar(0) lastReward !: number;
 	@VueVar(0) lastBlockFound !: number;
+	@VueVar(0) connectedNode !: string;
 
 	private intervalRefreshStat = 0;
 
@@ -48,12 +51,17 @@ class NetworkView extends DestructableView{
 	}
 
 	refreshStats() {
-		blockchainExplorer.getNetworkInfo().then((info : NetworkInfo)=>{
-			this.networkDifficulty = info.difficulty;
-			this.networkHashrate = info.difficulty/config.avgBlockTime/1000000;
-			this.blockchainHeight = info.height;
-			this.lastReward = info.reward/Math.pow(10, config.coinUnitPlaces);
-			this.lastBlockFound = info.timestamp;
+		let self = this;
+		let randInt = Math.floor(Math.random() * Math.floor(config.apiUrl.length));
+		$.ajax({
+			url:config.apiUrl[randInt]+'network.php'
+		}).done(function(data : any){
+			self.networkDifficulty = data.difficulty;
+			self.networkHashrate = data.difficulty/config.avgBlockTime/1000000;
+			self.blockchainHeight = data.height;
+			self.lastReward = data.reward/Math.pow(10, config.coinUnitPlaces);
+			self.lastBlockFound = parseInt(data.timestamp);
+			self.connectedNode = data.daemon;
 		});
 	}
 

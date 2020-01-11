@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -21,20 +20,23 @@ import {DestructableView} from "../lib/numbersLab/DestructableView";
 import {Constants} from "../model/Constants";
 import {AppState} from "../model/AppState";
 import {Transaction, TransactionIn} from "../model/Transaction";
-import {Cn} from "../model/Cn";
+import {Storage} from "../model/Storage";
+import {Currency} from "../model/Currency";
 
 let wallet : Wallet = DependencyInjectorInstance().getInstance(Wallet.name,'default', false);
 let blockchainExplorer = DependencyInjectorInstance().getInstance(Constants.BLOCKCHAIN_EXPLORER);
-(<any>window).wallet = wallet;
 
 class AccountView extends DestructableView{
 	@VueVar([]) transactions !: Transaction[];
 	@VueVar(0) walletAmount !: number;
+	@VueVar(0) walletAmountCurrency !: number;
 	@VueVar(0) unlockedWalletAmount !: number;
 
 	@VueVar(0) currentScanBlock !: number;
 	@VueVar(0) blockchainHeight !: number;
 	@VueVar(Math.pow(10, config.coinUnitPlaces)) currencyDivider !: number;
+
+	@VueVar('btc') countrycurrency !: string;
 
 	intervalRefresh : number = 0;
 
@@ -65,14 +67,26 @@ class AccountView extends DestructableView{
 	moreInfoOnTx(transaction : Transaction){
 		let explorerUrlHash = config.testnet ? config.testnetExplorerUrlHash : config.mainnetExplorerUrlHash;
 		let explorerUrlBlock = config.testnet ? config.testnetExplorerUrlBlock : config.mainnetExplorerUrlBlock;
+		let transFee = 100000000; //TODO
+
 		let feesHtml = '';
 		if(transaction.getAmount() < 0)
-			feesHtml = `<div>`+i18n.t('accountPage.txDetails.feesOnTx')+`: `+Cn.formatMoneySymbol(transaction.fees)+`</a></div>`;
+			feesHtml = `<div>`+i18n.t('accountPage.txDetails.feesOnTx')+`: `+(transFee / Math.pow(10, config.coinUnitPlaces))+`</a> `+config.coinSymbol+`</div>`;
 
 		let paymentId = '';
 		if(transaction.paymentId !== ''){
 			paymentId = `<div>`+i18n.t('accountPage.txDetails.paymentId')+`: `+transaction.paymentId+`</a></div>`;
 		}
+
+		let unlockStatus = '';let unlckStatus = '';let transHeight = transaction.blockHeight + config.txMinConfirms;
+		let actualHeight = this.currentScanBlock;
+
+		if(transHeight >= actualHeight) {
+			unlckStatus = (((transHeight-actualHeight)-11)*-1).toString()+'/'+config.txMinConfirms+' Confirmations';
+		} else {
+			unlckStatus = config.txMinConfirms+'/'+config.txMinConfirms+' Confirmations';
+		}
+		unlockStatus = `<div>`+i18n.t('accountPage.txDetails.unlockStatus')+`: `+unlckStatus+`</a></div>`;
 
 		let txPrivKeyMessage = '';
 		let txPrivKey = wallet.findTxPrivateKeyWithHash(transaction.hash);
@@ -80,19 +94,16 @@ class AccountView extends DestructableView{
 			txPrivKeyMessage = `<div>`+i18n.t('accountPage.txDetails.txPrivKey')+`: `+txPrivKey+`</a></div>`;
 		}
 
-		let blockHeight = '';
-		if(transaction.blockHeight > 0){
-			blockHeight = `<div>`+i18n.t('accountPage.txDetails.blockHeight')+`: <a href="`+explorerUrlBlock.replace('{ID}', ''+transaction.blockHeight)+`" target="_blank">`+transaction.blockHeight+`</a></div>`;
-		}
 		swal({
 			title:i18n.t('accountPage.txDetails.title'),
 			html:`
 <div class="tl" >
-	<div>`+i18n.t('accountPage.txDetails.txHash')+`: <a href="`+explorerUrlHash.replace('{ID}', transaction.hash)+`" target="_blank">`+transaction.hash+`</a></div>
+	<div>`+i18n.t('accountPage.txDetails.txHash')+`: <a href="`+explorerUrlHash.replace('{ID}', transaction.hash)+`" target="_blank">Check on Explorer</a></div>
 	`+paymentId+`
+	`+unlockStatus+`
 	`+feesHtml+`
 	`+txPrivKeyMessage+`
-	`+blockHeight+`
+	<div>`+i18n.t('accountPage.txDetails.blockHeight')+`: <a href="`+explorerUrlBlock.replace('{ID}', ''+transaction.blockHeight)+`" target="_blank">`+transaction.blockHeight+`</a></div>
 </div>`
 		});
 	}
@@ -104,6 +115,18 @@ class AccountView extends DestructableView{
 		if(wallet.getAll().length+wallet.txsMem.length !== this.transactions.length) {
 			this.transactions = wallet.txsMem.concat(wallet.getTransactionsCopy().reverse());
 		}
+		Currency.getCurrency().then((currency : string) => {
+			if(currency == null)
+				currency = 'btc';
+			this.countrycurrency = currency;
+		});
+		let self = this;
+		let randInt = Math.floor(Math.random() * Math.floor(config.apiUrl.length));
+		$.ajax({
+			url:config.apiUrl[randInt]+'price.php?currency='+self.countrycurrency
+		}).done(function(data : any){
+			self.walletAmountCurrency = wallet.amount * data.value;
+		});
 	}
 }
 

@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -22,12 +21,11 @@ import {Password} from "../model/Password";
 import {Wallet} from "../model/Wallet";
 import {KeysRepository} from "../model/KeysRepository";
 import {BlockchainExplorerProvider} from "../providers/BlockchainExplorerProvider";
-import {Cn, CnUtils} from "../model/Cn";
-import {BlockchainExplorer} from "../model/blockchain/BlockchainExplorer";
+import {BlockchainExplorerRpc2} from "../model/blockchain/BlockchainExplorerRpc2";
 
 AppState.enableLeftMenu();
 
-let blockchainExplorer : BlockchainExplorer = BlockchainExplorerProvider.getInstance();
+let blockchainExplorer : BlockchainExplorerRpc2 = BlockchainExplorerProvider.getInstance();
 
 class ImportView extends DestructableView{
 	@VueVar(false) viewOnly !: boolean;
@@ -69,7 +67,7 @@ class ImportView extends DestructableView{
 		blockchainExplorer.getHeight().then(function(currentHeight){
 			let newWallet = new Wallet();
 			if(self.viewOnly){
-				let decodedPublic = Cn.decode_address(self.publicAddress.trim());
+				let decodedPublic = cnUtil.decode_address(self.publicAddress.trim());
 				newWallet.keys = {
 					priv:{
 						spend:'',
@@ -81,14 +79,14 @@ class ImportView extends DestructableView{
 					}
 				};
 			}else {
-				console.log(1);
+				//console.log(1);
 				let viewkey = self.privateViewKey.trim();
 				if(viewkey === ''){
-					viewkey = Cn.generate_keys(CnUtils.cn_fast_hash(self.privateSpendKey.trim())).sec;
+					viewkey = cnUtil.generate_keys(cnUtil.cn_fast_hash(self.privateSpendKey.trim())).sec;
 				}
-				console.log(1, viewkey);
+				//console.log(1, viewkey);
 				newWallet.keys = KeysRepository.fromPriv(self.privateSpendKey.trim(), viewkey);
-				console.log(1);
+				//console.log(1);
 			}
 
 			let height = self.importHeight;//never trust a perfect value from the user
@@ -137,7 +135,7 @@ class ImportView extends DestructableView{
 	@VueWatched()
 	publicAddressWatch(){
 		try{
-			Cn.decode_address(this.publicAddress.trim());
+			cnUtil.decode_address(this.publicAddress.trim());
 			this.validPublicAddress = true;
 		}catch(e){
 			this.validPublicAddress = false;

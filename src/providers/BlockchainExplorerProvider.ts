@@ -1,7 +1,6 @@
 /*
  * Copyright (c) 2018, Gnock
  * Copyright (c) 2018, The Masari Project
- * Copyright (c) 2020, The Chimera Project
  *
  * Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  *
@@ -17,17 +16,16 @@
 import {Constants} from "../model/Constants";
 import {DependencyInjectorInstance} from "../lib/numbersLab/DependencyInjector";
 import {BlockchainExplorerRpc2} from "../model/blockchain/BlockchainExplorerRpc2";
-import {BlockchainExplorer} from "../model/blockchain/BlockchainExplorer";
-import {BlockchainExplorerRpcDaemon} from "../model/blockchain/BlockchainExplorerRpcDaemon";
 
 export class BlockchainExplorerProvider{
-	static getInstance() : BlockchainExplorer{
-		let blockchainExplorer : BlockchainExplorer = DependencyInjectorInstance().getInstance(Constants.BLOCKCHAIN_EXPLORER);
+
+	static getInstance() : BlockchainExplorerRpc2{
+		let blockchainExplorer : BlockchainExplorerRpc2 = DependencyInjectorInstance().getInstance(Constants.BLOCKCHAIN_EXPLORER);
 		if(blockchainExplorer === null) {
-			// blockchainExplorer = new BlockchainExplorerRpc2();
-			blockchainExplorer = new BlockchainExplorerRpcDaemon();
+			blockchainExplorer = new BlockchainExplorerRpc2();
 			DependencyInjectorInstance().register(Constants.BLOCKCHAIN_EXPLORER, blockchainExplorer);
 		}
 		return blockchainExplorer;
 	}
+
 }
