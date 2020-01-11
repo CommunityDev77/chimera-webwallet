@@ -9,7 +9,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, user-scalable=no">
 
-	<!--<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://www.masariwallet.com 'unsafe-eval' ; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">-->
+ 	<meta http-equiv="Content-Security-Policy" content="connect-src * data:; default-src * data: gap: https://myqwertycoin.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src * data: content:;">
+
 	<meta name="referrer" content="none">
 	<meta name="msapplication-tap-highlight" content="no">
 
@@ -37,11 +38,11 @@
 	<meta property="twitter:description" content="" />
 
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://wallet.chimeraproject.io/" />
-	<meta property="og:image" content="https://wallet.chimeraproject.io/images/icons/icon-144x144.png" />
+	<meta property="og:url" content="http://wallet.chimeraproject.io/" />
+	<meta property="og:image" content="http://wallet.chimeraproject.io/images/icons/icon-144x144.png" />
 
 	<meta property="twitter:card" content="summary" />
-	<meta property="twitter:site" content="https://wallet.chimeraproject.io/" />
+	<meta property="twitter:site" content="http://wallet.chimeraproject.io/" />
 
 	<meta property="twitter:creator" content="@tylersisia" />
 
@@ -50,11 +51,11 @@
 </head>
 <body class="menuHidden menuDisabled">
 
-<div id="topBar" >
+<div id="topBar">
 	<a href="#!index" class="toggleMenu"><i class="fa fa-bars" aria-hidden="true"></i></a>
 </div>
 
-<div id="menu" >
+<div id="menu">
 	<a><img src="./assets/img/logo.png"/></a>
 	<a href="#!index" class="onlyNotConnected"><span class="icon" ><i class="fa fa-bank" aria-hidden="true"></i></span> {{ $t("menu.home") }}</a>
 	<a href="#!account" class="onlyWhenConnected"><span class="icon" ><i class="fa fa-bank" aria-hidden="true"></i></span> {{ $t("menu.account") }}</a>
@@ -74,7 +75,7 @@
 
 <div id="page" ></div>
 
-<div id="copyright" v-cloak="" >
+<div id="copyright" v-cloak="">
 	<div class="hideOnNative" >© 2020 The Chimera Project</div>
 	<div class="links" >
 		<select v-model="language" class="hideOnNative">
@@ -90,7 +91,7 @@
 		</select>
 		<a href="#!termsOfUse" >{{ $t("bottom.termsOfUse") }}</a>
 		<a href="#!privacyPolicy" >{{ $t("bottom.privacyPolicy") }}</a>
-		<a class="hideOnNative" href="#!support" >{{ $t("bottom.support") }}</a>
+		<a href="#!support" >{{ $t("bottom.support") }}</a>
 		<a class="hideOnNative" href="#!donate" >{{ $t("bottom.donate") }}</a>
 		<a class="hideOnNative" href="#!network" >{{ $t("bottom.network") }}</a>
 		<a class="hideOnNative" href="https://chimeraproject.io" target="_blank" >{{ $t("bottom.miningPool") }}</a>
@@ -122,6 +123,7 @@
 <script src="lib/base58.js"></script>
 <script src="lib/jspdf.min.js"></script>
 <!--<script src="lib/mnemonic.js"></script>-->
+<script src="lib/cn_utils.js"></script>
 <script src="lib/cn_utils_native.js"></script>
 <script src="lib/FileSaver.min.js"></script>
 <script data-main="index.js" src="lib/require.js"></script>
