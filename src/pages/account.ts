@@ -21,7 +21,7 @@ import {Constants} from "../model/Constants";
 import {AppState} from "../model/AppState";
 import {Transaction, TransactionIn} from "../model/Transaction";
 import {Storage} from "../model/Storage";
-import {Currency} from "../model/Currency";
+//import {Currency} from "../model/Currency";
 
 let wallet : Wallet = DependencyInjectorInstance().getInstance(Wallet.name,'default', false);
 let blockchainExplorer = DependencyInjectorInstance().getInstance(Constants.BLOCKCHAIN_EXPLORER);
