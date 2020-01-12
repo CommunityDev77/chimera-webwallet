@@ -115,18 +115,18 @@ class AccountView extends DestructableView{
 		if(wallet.getAll().length+wallet.txsMem.length !== this.transactions.length) {
 			this.transactions = wallet.txsMem.concat(wallet.getTransactionsCopy().reverse());
 		}
-		Currency.getCurrency().then((currency : string) => {
-			if(currency == null)
-				currency = 'btc';
-			this.countrycurrency = currency;
-		});
+//		Currency.getCurrency().then((currency : string) => {
+//			if(currency == null)
+//				currency = 'btc';
+//			this.countrycurrency = currency;
+//		});
 		let self = this;
 		let randInt = Math.floor(Math.random() * Math.floor(config.apiUrl.length));
-		$.ajax({
-			url:config.apiUrl[randInt]+'price.php?currency='+self.countrycurrency
-		}).done(function(data : any){
-			self.walletAmountCurrency = wallet.amount * data.value;
-		});
+//		$.ajax({
+//			url:config.apiUrl[randInt]+'price.php?currency='+self.countrycurrency
+//		}).done(function(data : any){
+//			self.walletAmountCurrency = wallet.amount * data.value;
+//		});
 	}
 }
 
